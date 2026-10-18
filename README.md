@@ -1,4 +1,4 @@
-# InfoSec Audit & Reconnaissance Tools 🛡️🔍
+# InfoSec Audit & Reconnaissance Tools
 
 [![CI](https://github.com/rafaelsoje/infosec-audit-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/rafaelsoje/infosec-audit-tools/actions)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
@@ -18,7 +18,7 @@ Desenvolvido por **[Rafael Soje](https://rafaelsoje.com)** — Pós-graduado em 
 
 ---
 
-## 📁 Estrutura do Repositório
+## Estrutura do Repositório
 
 ```text
 infosec-audit-tools/
@@ -36,7 +36,7 @@ infosec-audit-tools/
 
 ---
 
-## 🚀 Instalação e Pré-requisitos
+## Instalação e Pré-requisitos
 
 Recomenda-se a utilização de um ambiente virtual Python:
 
@@ -55,11 +55,11 @@ pip install -r requirements.txt
 
 ---
 
-## 🛠️ Módulos e Exemplos de Uso
+## Módulos e Exemplos de Uso
 
 ### 1. Reconhecimento de Superfície (`recon/`)
 
-#### 🌐 `domain_availability_checker.py`
+#### `domain_availability_checker.py`
 Utilitário de alto desempenho construído com `asyncio` e `aiohttp` para varredura e validação de disponibilidade de domínios em larga escala:
 * Consulta serviços oficiais de **RDAP (Registration Data Access Protocol)**: Verisign (`.com`), Registro.br (`.com.br`) e `rdap.org`.
 * Valida resolução DNS primária (`A`/`AAAA`) com controle de concorrência por semáforo (`asyncio.Semaphore`).
@@ -73,7 +73,7 @@ python3 recon/domain_availability_checker.py lista_nomes.txt --tlds com,com.br -
 python3 recon/domain_availability_checker.py lista_nomes.txt --only-print
 ```
 
-#### 🔒 `ssl_tls_security_auditor.py`
+#### `ssl_tls_security_auditor.py`
 Auditor passivo de infraestrutura criptográfica SSL/TLS e certificados X.509:
 * Conexão nativa via socket TLS sem dependências externas.
 * Valida a versão do protocolo negociado (TLS 1.2 / TLS 1.3) e alerta sobre protocolos obsoletos.
@@ -84,7 +84,7 @@ Auditor passivo de infraestrutura criptográfica SSL/TLS e certificados X.509:
 python3 recon/ssl_tls_security_auditor.py exemplo.com.br
 ```
 
-#### 🌐 `subdomain_recon_crtsh.py`
+#### `subdomain_recon_crtsh.py`
 Mapeador passivo de subdomínios utilizando Certificate Transparency (CT Logs):
 * Consulta a base pública do `crt.sh` para descobrir ativos expostos sem tocar no alvo.
 * Desduplica entradas, limpa wildcards (`*.`) e valida opcionalmente resolução DNS ativa (`--resolve`).
@@ -99,7 +99,7 @@ python3 recon/subdomain_recon_crtsh.py exemplo.com.br --resolve -o subdominios.c
 
 ### 2. Auditoria e Defesa Web (`wordpress/`)
 
-#### 🛡️ `really_simple_security_detector.py`
+#### `really_simple_security_detector.py`
 Auditor passivo de postura de segurança web:
 * Inspeciona cabeçalhos de proteção moderna:
   * `Strict-Transport-Security` (HSTS)
@@ -114,7 +114,7 @@ Auditor passivo de postura de segurança web:
 python3 wordpress/really_simple_security_detector.py https://exemplo.com.br
 ```
 
-#### 🎯 `cve_2024_10924_poc.py`
+#### `cve_2024_10924_poc.py`
 Validador de conformidade e PoC laboratorial para a vulnerabilidade crítica **CVE-2024-10924** (CVSS 9.8 - *Authentication Bypass* no plugin *Really Simple Security* anterior à versão 9.1.2):
 * Demonstra o impacto da ausência de checagem de nonce no endpoint `/reallysimplessl/v1/two_fa/skip_onboarding`.
 * Acompanha recomendações de mitigação em nível de código e WAF (Cloudflare / Nginx).
@@ -126,7 +126,7 @@ python3 wordpress/cve_2024_10924_poc.py http://lab-alvo.local:8080 --user-id 1
 
 ---
 
-## 🔒 Boas Práticas de Remediação
+## Boas Práticas de Remediação
 
 1. **Defesa em Profundidade**: Cabeçalhos de segurança HTTP devem ser sempre implementados na camada de borda (Cloudflare / Nginx / Apache), independentemente dos plugins da aplicação.
 2. **Atualização Contínua**: Vulnerabilidades de alta severidade em CMS exigem patching ágil e monitoramento proativo de CVEs.
@@ -134,10 +134,9 @@ python3 wordpress/cve_2024_10924_poc.py http://lab-alvo.local:8080 --user-id 1
 
 ---
 
-## 👤 Autor
+## Autor
 
 **Rafael Soje**
 * **Website Oficial**: [rafaelsoje.com](https://rafaelsoje.com)
 * **GitHub**: [@rafaelsoje](https://github.com/rafaelsoje)
 * **Formação**: Pós-graduação em Segurança da Informação | Ciência da Computação
-
