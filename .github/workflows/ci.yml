@@ -1,0 +1,31 @@
+name: CI - Verificação de Integridade
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    name: Validação de Código Python
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar Dependências
+        run: |
+          pip install -r requirements.txt
+
+      - name: Compilar e Validar Sintaxe
+        run: |
+          echo "[+] Validando sintaxe Python com py_compile..."
+          python3 -m py_compile recon/*.py wordpress/*.py
+          echo "[✔] Todos os módulos Python foram validados com sucesso."

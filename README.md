@@ -1,5 +1,6 @@
 # InfoSec Audit & Reconnaissance Tools 🛡️🔍
 
+[![CI](https://github.com/rafaelsoje/infosec-audit-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/rafaelsoje/infosec-audit-tools/actions)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Security: InfoSec](https://img.shields.io/badge/Domain-Information%20Security-red)](https://rafaelsoje.com)
 [![AsyncIO](https://img.shields.io/badge/Networking-AsyncIO%20%2F%20RDAP-green)](https://docs.python.org/3/library/asyncio.html)
@@ -7,7 +8,7 @@
 
 Conjunto de utilitários em Python para reconhecimento de superfície de ataque, auditoria de cabeçalhos HTTP defensivos e validação de vulnerabilidades conhecidas em laboratório controlado.
 
-Desenvolvido por **[Rafael Soje](https://rafaelsoje.com)** — Pós-graduado em Segurança da Informação, Administrador Linux (LPIC-1) e Engenheiro de Software Full Stack.
+Desenvolvido por **[Rafael Soje](https://rafaelsoje.com)** — Pós-graduado em Segurança da Informação e Engenheiro de Software Full Stack.
 
 ---
 
@@ -115,4 +116,4 @@ python3 wordpress/cve_2024_10924_poc.py http://lab-alvo.local:8080 --user-id 1
 * **Website Oficial**: [rafaelsoje.com](https://rafaelsoje.com)
 * **GitHub**: [@rafaelsoje](https://github.com/rafaelsoje)
 * **Formação**: Pós-graduação em Segurança da Informação | Ciência da Computação
-* **Certificação**: LPIC-1 (Linux Professional Institute)
+
