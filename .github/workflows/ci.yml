@@ -29,3 +29,4 @@ jobs:
           echo "[+] Validando sintaxe Python com py_compile..."
           python3 -m py_compile recon/*.py wordpress/*.py
           echo "[✔] Todos os módulos Python foram validados com sucesso."
+

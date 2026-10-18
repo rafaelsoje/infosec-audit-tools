@@ -23,7 +23,9 @@ Desenvolvido por **[Rafael Soje](https://rafaelsoje.com)** — Pós-graduado em 
 ```text
 infosec-audit-tools/
 ├── recon/
-│   └── domain_availability_checker.py     # Reconhecimento assíncrono via RDAP e resolução DNS
+│   ├── domain_availability_checker.py     # Reconhecimento assíncrono via RDAP e resolução DNS
+│   ├── ssl_tls_security_auditor.py        # Auditoria passiva de SSL/TLS, Ciphers e certificados X.509
+│   └── subdomain_recon_crtsh.py           # Descoberta passiva de subdomínios via CT Logs (crt.sh)
 ├── wordpress/
 │   ├── really_simple_security_detector.py # Auditoria passiva de headers e detecção de versões
 │   └── cve_2024_10924_poc.py              # PoC e guia de remediação para CVE-2024-10924
@@ -69,6 +71,28 @@ python3 recon/domain_availability_checker.py lista_nomes.txt --tlds com,com.br -
 
 # Apenas exibir na saída padrão (terminal):
 python3 recon/domain_availability_checker.py lista_nomes.txt --only-print
+```
+
+#### 🔒 `ssl_tls_security_auditor.py`
+Auditor passivo de infraestrutura criptográfica SSL/TLS e certificados X.509:
+* Conexão nativa via socket TLS sem dependências externas.
+* Valida a versão do protocolo negociado (TLS 1.2 / TLS 1.3) e alerta sobre protocolos obsoletos.
+* Inspeciona autoridade certificadora (CA), ciphers negociados e data exata de expiração com aviso de expiração iminente.
+* Mapeia todos os **Subject Alternative Names (SANs)**, descobrindo subdomínios e domínios irmãos do alvo.
+
+```bash
+python3 recon/ssl_tls_security_auditor.py exemplo.com.br
+```
+
+#### 🌐 `subdomain_recon_crtsh.py`
+Mapeador passivo de subdomínios utilizando Certificate Transparency (CT Logs):
+* Consulta a base pública do `crt.sh` para descobrir ativos expostos sem tocar no alvo.
+* Desduplica entradas, limpa wildcards (`*.`) e valida opcionalmente resolução DNS ativa (`--resolve`).
+* Suporta exportação direta para CSV.
+
+```bash
+# Mapear e testar resolução DNS ativa:
+python3 recon/subdomain_recon_crtsh.py exemplo.com.br --resolve -o subdominios.csv
 ```
 
 ---

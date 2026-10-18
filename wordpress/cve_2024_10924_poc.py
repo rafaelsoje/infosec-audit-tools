@@ -85,3 +85,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     test_vulnerability(args.url, args.user_id)
+
