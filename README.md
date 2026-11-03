@@ -24,6 +24,7 @@ Desenvolvido por **[Rafael Soje](https://rafaelsoje.com)** — Pós-graduado em 
 infosec-audit-tools/
 ├── recon/
 │   ├── domain_availability_checker.py     # Reconhecimento assíncrono via RDAP e resolução DNS
+│   ├── http_security_headers_auditor.py   # Auditoria defensiva de cabeçalhos HTTP com scoring OWASP
 │   ├── ssl_tls_security_auditor.py        # Auditoria passiva de SSL/TLS, Ciphers e certificados X.509
 │   └── subdomain_recon_crtsh.py           # Descoberta passiva de subdomínios via CT Logs (crt.sh)
 ├── wordpress/
@@ -71,6 +72,21 @@ python3 recon/domain_availability_checker.py lista_nomes.txt --tlds com,com.br -
 
 # Apenas exibir na saída padrão (terminal):
 python3 recon/domain_availability_checker.py lista_nomes.txt --only-print
+```
+
+#### `http_security_headers_auditor.py`
+Auditor defensivo de postura de segurança web e cabeçalhos HTTP baseado no OWASP Secure Headers Project:
+* Avalia cabeçalhos defensivos essenciais: HSTS (`Strict-Transport-Security`), CSP (`Content-Security-Policy`), X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy (COOP) e Cross-Origin-Resource-Policy (CORP).
+* Alerta sobre diretivas permissivas e inseguras em CSP (`'unsafe-inline'`, `'unsafe-eval'`) e vazamento de informações de infraestrutura (`Server`, `X-Powered-By`).
+* Calcula pontuação técnica e nota conceitual de conformidade (A+, A, B, C, D ou F).
+* Suporta saída estruturada em JSON (`--json`) e exportação para arquivo (`-o`).
+
+```bash
+# Executar auditoria direta:
+python3 recon/http_security_headers_auditor.py https://exemplo.com.br
+
+# Exportar resultado estruturado para arquivo JSON:
+python3 recon/http_security_headers_auditor.py https://exemplo.com.br -o headers_report.json
 ```
 
 #### `ssl_tls_security_auditor.py`
