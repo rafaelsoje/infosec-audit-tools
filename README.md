@@ -4,6 +4,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Security: InfoSec](https://img.shields.io/badge/Domain-Information%20Security-red)](https://rafaelsoje.com)
 [![AsyncIO](https://img.shields.io/badge/Networking-AsyncIO%20%2F%20RDAP-green)](https://docs.python.org/3/library/asyncio.html)
+[![OWASP: Secure Headers](https://img.shields.io/badge/OWASP-Secure%20Headers-orange)](https://owasp.org/www-project-secure-headers/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Conjunto de utilitários em Python para reconhecimento de superfície de ataque, auditoria de cabeçalhos HTTP defensivos e validação de vulnerabilidades conhecidas em laboratório controlado.
