@@ -7,153 +7,158 @@
 [![OWASP: Secure Headers](https://img.shields.io/badge/OWASP-Secure%20Headers-orange)](https://owasp.org/www-project-secure-headers/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Conjunto de utilitários em Python para reconhecimento de superfície de ataque, auditoria de cabeçalhos HTTP defensivos e validação de vulnerabilidades conhecidas em laboratório controlado.
+[ English ] • [ [Versão em Português](README.pt-br.md) ]
 
-Desenvolvido por **[Rafael Soje](https://rafaelsoje.com)** — Pós-graduado em Segurança da Informação e Engenheiro de Software Full Stack.
+---
+
+A modular suite of Python utilities designed for attack surface reconnaissance, defensive HTTP security header auditing, and controlled vulnerability validation.
+
+Developed by **[Rafael Soje](https://rafaelsoje.com)** — Postgraduate in Information Security & Full Stack Software Engineer.
 
 ---
 
 > [!CAUTION]
-> **Aviso Ético e Legal (Disclaimer):**
-> As ferramentas contidas neste repositório destinam-se estritamente a fins educacionais, exercícios de Blue Team / Red Team em ambientes controlados e testes de penetração autorizados pelo proprietário do ativo. O autor não se responsabiliza por qualquer utilização indevida ou ilegal.
+> **Ethical and Legal Disclaimer:**
+> The tools in this repository are intended strictly for educational purposes, authorized penetration testing, and Blue Team / Red Team exercises conducted within controlled lab environments or on systems where explicit authorization has been granted by the asset owner. The author accepts no liability for misuse, unauthorized access, or damages resulting from the use of these tools.
 
 ---
 
-## Estrutura do Repositório
+## Repository Structure
 
 ```text
 infosec-audit-tools/
 ├── recon/
-│   ├── domain_availability_checker.py     # Reconhecimento assíncrono via RDAP e resolução DNS
-│   ├── http_security_headers_auditor.py   # Auditoria defensiva de cabeçalhos HTTP com scoring OWASP
-│   ├── ssl_tls_security_auditor.py        # Auditoria passiva de SSL/TLS, Ciphers e certificados X.509
-│   └── subdomain_recon_crtsh.py           # Descoberta passiva de subdomínios via CT Logs (crt.sh)
+│   ├── domain_availability_checker.py     # Asynchronous RDAP and DNS lookup reconnaissance
+│   ├── http_security_headers_auditor.py   # Defensive HTTP security header auditing with OWASP scoring
+│   ├── ssl_tls_security_auditor.py        # Passive SSL/TLS cipher and X.509 certificate auditing
+│   └── subdomain_recon_crtsh.py           # Passive subdomain discovery via CT Logs (crt.sh)
 ├── wordpress/
-│   ├── really_simple_security_detector.py # Auditoria passiva de headers e detecção de versões
-│   └── cve_2024_10924_poc.py              # PoC e guia de remediação para CVE-2024-10924
-├── requirements.txt                       # Dependências do projeto (aiohttp, requests)
-├── LICENSE                                # Licença MIT
-└── README.md                              # Documentação e guias de execução
+│   ├── really_simple_security_detector.py # Passive security header audit and plugin version detection
+│   └── cve_2024_10924_poc.py              # Proof of Concept and remediation guide for CVE-2024-10924
+├── requirements.txt                       # Project dependencies (aiohttp, requests)
+├── LICENSE                                # MIT License
+├── README.md                              # English documentation and usage guides
+└── README.pt-br.md                        # Portuguese documentation
 ```
 
 ---
 
-## Instalação e Pré-requisitos
+## Installation & Prerequisites
 
-Recomenda-se a utilização de um ambiente virtual Python:
+Using a Python virtual environment is recommended:
 
 ```bash
-# Clonar o repositório
+# Clone the repository
 git clone https://github.com/rafaelsoje/infosec-audit-tools.git
 cd infosec-audit-tools
 
-# Criar e ativar o ambiente virtual
+# Create and activate virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Instalar dependências
+# Install dependencies
 pip install -r requirements.txt
 ```
 
 ---
 
-## Módulos e Exemplos de Uso
+## Modules & Usage Guides
 
-### 1. Reconhecimento de Superfície (`recon/`)
+### 1. Attack Surface Reconnaissance (`recon/`)
 
 #### `domain_availability_checker.py`
-Utilitário de alto desempenho construído com `asyncio` e `aiohttp` para varredura e validação de disponibilidade de domínios em larga escala:
-* Consulta serviços oficiais de **RDAP (Registration Data Access Protocol)**: Verisign (`.com`), Registro.br (`.com.br`) e `rdap.org`.
-* Valida resolução DNS primária (`A`/`AAAA`) com controle de concorrência por semáforo (`asyncio.Semaphore`).
-* Exportação direta para CSV para geração de relatórios de inteligência de marca e nomes de infraestrutura.
+High-performance asynchronous scanner built with `asyncio` and `aiohttp` for large-scale domain availability checking and infrastructure reconnaissance:
+* Queries official **RDAP (Registration Data Access Protocol)** endpoints: Verisign (`.com`), Registro.br (`.com.br`), and `rdap.org`.
+* Validates primary DNS resolution (`A`/`AAAA`) with semaphore-based concurrency control (`asyncio.Semaphore`).
+* Direct CSV export for brand intelligence, defensive domain registration tracking, and domain discovery.
 
 ```bash
-# Executar verificação a partir de lista de termos:
-python3 recon/domain_availability_checker.py lista_nomes.txt --tlds com,com.br --concurrency 30 -o relatorio_disponiveis.csv
+# Check availability from an input wordlist:
+python3 recon/domain_availability_checker.py wordlist.txt --tlds com,com.br --concurrency 30 -o available_domains.csv
 
-# Apenas exibir na saída padrão (terminal):
-python3 recon/domain_availability_checker.py lista_nomes.txt --only-print
+# Output to stdout only:
+python3 recon/domain_availability_checker.py wordlist.txt --only-print
 ```
 
 #### `http_security_headers_auditor.py`
-Auditor defensivo de postura de segurança web e cabeçalhos HTTP baseado no OWASP Secure Headers Project:
-* Avalia cabeçalhos defensivos essenciais: HSTS (`Strict-Transport-Security`), CSP (`Content-Security-Policy`), X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy (COOP) e Cross-Origin-Resource-Policy (CORP).
-* Alerta sobre diretivas permissivas e inseguras em CSP (`'unsafe-inline'`, `'unsafe-eval'`) e vazamento de informações de infraestrutura (`Server`, `X-Powered-By`).
-* Calcula pontuação técnica e nota conceitual de conformidade (A+, A, B, C, D ou F).
-* Suporta saída estruturada em JSON (`--json`) e exportação para arquivo (`-o`).
+Defensive web posture and HTTP security header auditor aligned with the OWASP Secure Headers Project:
+* Evaluates critical defensive headers: HSTS (`Strict-Transport-Security`), CSP (`Content-Security-Policy`), X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy (COOP), and Cross-Origin-Resource-Policy (CORP).
+* Flags overly permissive or dangerous directives in CSP (`'unsafe-inline'`, `'unsafe-eval'`) and sensitive server banner leakage (`Server`, `X-Powered-By`).
+* Computes numerical technical score and letter grade rating (A+, A, B, C, D, or F).
+* Supports structured JSON output (`--json`) and file export (`-o`).
 
 ```bash
-# Executar auditoria direta:
-python3 recon/http_security_headers_auditor.py https://exemplo.com.br
+# Run direct audit:
+python3 recon/http_security_headers_auditor.py https://example.com
 
-# Exportar resultado estruturado para arquivo JSON:
-python3 recon/http_security_headers_auditor.py https://exemplo.com.br -o headers_report.json
+# Export structured audit results to JSON:
+python3 recon/http_security_headers_auditor.py https://example.com -o headers_report.json
 ```
 
 #### `ssl_tls_security_auditor.py`
-Auditor passivo de infraestrutura criptográfica SSL/TLS e certificados X.509:
-* Conexão nativa via socket TLS sem dependências externas.
-* Valida a versão do protocolo negociado (TLS 1.2 / TLS 1.3) e alerta sobre protocolos obsoletos.
-* Inspeciona autoridade certificadora (CA), ciphers negociados e data exata de expiração com aviso de expiração iminente.
-* Mapeia todos os **Subject Alternative Names (SANs)**, descobrindo subdomínios e domínios irmãos do alvo.
+Passive cryptographic and SSL/TLS certificate auditor:
+* Native TLS socket implementation without external dependencies.
+* Assesses negotiated TLS protocol version (TLS 1.2 / TLS 1.3) and warns about legacy/insecure ciphers.
+* Inspects Certificate Authority (CA) chain, active cipher suites, and exact expiration timestamp with countdown alerts.
+* Enumerates all **Subject Alternative Names (SANs)**, discovering sibling domains and hidden hostnames associated with the target.
 
 ```bash
-python3 recon/ssl_tls_security_auditor.py exemplo.com.br
+python3 recon/ssl_tls_security_auditor.py example.com
 ```
 
 #### `subdomain_recon_crtsh.py`
-Mapeador passivo de subdomínios utilizando Certificate Transparency (CT Logs):
-* Consulta a base pública do `crt.sh` para descobrir ativos expostos sem tocar no alvo.
-* Desduplica entradas, limpa wildcards (`*.`) e valida opcionalmente resolução DNS ativa (`--resolve`).
-* Suporta exportação direta para CSV.
+Passive subdomain enumeration leveraging Certificate Transparency (CT Logs):
+* Queries public `crt.sh` logs to uncover exposed assets without sending traffic to the target.
+* Deduplicates entries, strips wildcard prefixes (`*.`), and optionally verifies active DNS resolution (`--resolve`).
+* Supports direct CSV report export.
 
 ```bash
-# Mapear e testar resolução DNS ativa:
-python3 recon/subdomain_recon_crtsh.py exemplo.com.br --resolve -o subdominios.csv
+# Enumerate subdomains and test active DNS resolution:
+python3 recon/subdomain_recon_crtsh.py example.com --resolve -o subdomains.csv
 ```
 
 ---
 
-### 2. Auditoria e Defesa Web (`wordpress/`)
+### 2. Web Security & Application Auditing (`wordpress/`)
 
 #### `really_simple_security_detector.py`
-Auditor passivo de postura de segurança web:
-* Inspeciona cabeçalhos de proteção moderna:
+Passive web security and defensive configuration detector:
+* Inspects defensive headers:
   * `Strict-Transport-Security` (HSTS)
   * `Content-Security-Policy` (CSP)
   * `X-Content-Type-Options`
   * `X-Frame-Options`
   * `Permissions-Policy`
-* Detecta assinaturas ativas do plugin no DOM/HTML.
-* Audita o arquivo de changelog público (`readme.txt`) e emite alertas automáticos caso a versão instalada seja inferior a versões corrigidas contra vulnerabilidades conhecidas.
+* Detects active plugin signatures within the DOM/HTML.
+* Audits public changelog metadata (`readme.txt`) and issues automated alerts if the discovered version is vulnerable to known CVEs.
 
 ```bash
-python3 wordpress/really_simple_security_detector.py https://exemplo.com.br
+python3 wordpress/really_simple_security_detector.py https://example.com
 ```
 
 #### `cve_2024_10924_poc.py`
-Validador de conformidade e PoC laboratorial para a vulnerabilidade crítica **CVE-2024-10924** (CVSS 9.8 - *Authentication Bypass* no plugin *Really Simple Security* anterior à versão 9.1.2):
-* Demonstra o impacto da ausência de checagem de nonce no endpoint `/reallysimplessl/v1/two_fa/skip_onboarding`.
-* Acompanha recomendações de mitigação em nível de código e WAF (Cloudflare / Nginx).
+Laboratory validation and Proof of Concept for critical vulnerability **CVE-2024-10924** (CVSS 9.8 - *Authentication Bypass* in *Really Simple Security* prior to version 9.1.2):
+* Demonstrates the impact of missing REST API nonce verification on `/reallysimplessl/v1/two_fa/skip_onboarding`.
+* Includes remediation recommendations at both code and WAF layers (Cloudflare / Nginx).
 
 ```bash
-# Executar em ambiente de laboratório controlado (ex: TryHackMe / HackTheBox / VM local):
-python3 wordpress/cve_2024_10924_poc.py http://lab-alvo.local:8080 --user-id 1
+# Run in an authorized lab environment (e.g., TryHackMe / HackTheBox / local container):
+python3 wordpress/cve_2024_10924_poc.py http://lab-target.local:8080 --user-id 1
 ```
 
 ---
 
-## Boas Práticas de Remediação
+## Defensive Remediation Best Practices
 
-1. **Defesa em Profundidade**: Cabeçalhos de segurança HTTP devem ser sempre implementados na camada de borda (Cloudflare / Nginx / Apache), independentemente dos plugins da aplicação.
-2. **Atualização Contínua**: Vulnerabilidades de alta severidade em CMS exigem patching ágil e monitoramento proativo de CVEs.
-3. **Hardening de Endpoints**: Restringir endpoints de onboarding, autenticação e depuração via regras de WAF e controle de acesso baseado em IP.
+1. **Defense in Depth**: Defensive HTTP headers should always be enforced at the edge/reverse proxy layer (Cloudflare / Nginx / Apache), independent of application-level plugins or CMS extensions.
+2. **Proactive Patch Management**: High-severity vulnerabilities in web frameworks require automated patch monitoring and rapid deployment pipelines.
+3. **Endpoint Hardening**: Restrict onboarding, authentication, and debugging endpoints via WAF rate limiting, GeoIP blocking, and IP allowlisting.
 
 ---
 
-## Autor
+## Author
 
 **Rafael Soje**
-* **Website Oficial**: [rafaelsoje.com](https://rafaelsoje.com)
+* **Official Website**: [rafaelsoje.com](https://rafaelsoje.com)
 * **GitHub**: [@rafaelsoje](https://github.com/rafaelsoje)
-* **Formação**: Pós-graduação em Segurança da Informação | Ciência da Computação
+* **Education**: Postgraduate in Information Security | B.S. in Computer Science
