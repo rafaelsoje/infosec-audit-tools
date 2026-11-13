@@ -29,6 +29,7 @@ Developed by **[Rafael Soje](https://rafaelsoje.com)** — Postgraduate in Infor
 infosec-audit-tools/
 ├── recon/
 │   ├── domain_availability_checker.py     # Asynchronous RDAP and DNS lookup reconnaissance
+│   ├── email_security_auditor.py          # Defensive email security auditing (SPF, DMARC, DKIM, anti-spoofing)
 │   ├── http_security_headers_auditor.py   # Defensive HTTP security header auditing with OWASP scoring
 │   ├── ssl_tls_security_auditor.py        # Passive SSL/TLS cipher and X.509 certificate auditing
 │   └── subdomain_recon_crtsh.py           # Passive subdomain discovery via CT Logs (crt.sh)
@@ -78,6 +79,22 @@ python3 recon/domain_availability_checker.py wordlist.txt --tlds com,com.br --co
 
 # Output to stdout only:
 python3 recon/domain_availability_checker.py wordlist.txt --only-print
+```
+
+#### `email_security_auditor.py`
+Passive DNS-based email security posture and domain spoofing auditor:
+* Audits **SPF (Sender Policy Framework, RFC 7208)**: validates `all` qualifiers (`-all`, `~all`, `?all`, `+all`), identifies multiple SPF records, and warns if DNS lookups exceed the RFC 10-lookup threshold.
+* Audits **DMARC (RFC 7489)**: inspects enforcement policy (`p=reject`, `p=quarantine`, `p=none`), subdomain policy (`sp=`), enforcement percentage (`pct=`), and aggregate/forensic telemetry tags (`rua`/`ruf`).
+* Discovers and verifies **DKIM (RFC 6376)** public keys using automated selector discovery or custom selector input (`-s` / `--selector`).
+* Calculates overall **Domain Spoofing Risk** (Critical, High, Medium, Low/Secure), numerical score (0-100), and letter grade (A+ through F).
+* Supports structured JSON output (`--json`) and file export (`-o`).
+
+```bash
+# Run email security audit against a target domain:
+python3 recon/email_security_auditor.py example.com
+
+# Audit with a custom DKIM selector and export to JSON:
+python3 recon/email_security_auditor.py example.com -s google --json -o email_audit.json
 ```
 
 #### `http_security_headers_auditor.py`

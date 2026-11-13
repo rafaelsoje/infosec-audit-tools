@@ -29,6 +29,7 @@ Desenvolvido por **[Rafael Soje](https://rafaelsoje.com)** — Pós-graduado em 
 infosec-audit-tools/
 ├── recon/
 │   ├── domain_availability_checker.py     # Reconhecimento assíncrono via RDAP e resolução DNS
+│   ├── email_security_auditor.py          # Auditoria defensiva de e-mail (SPF, DMARC, DKIM, anti-spoofing)
 │   ├── http_security_headers_auditor.py   # Auditoria defensiva de cabeçalhos HTTP com scoring OWASP
 │   ├── ssl_tls_security_auditor.py        # Auditoria passiva de SSL/TLS, Ciphers e certificados X.509
 │   └── subdomain_recon_crtsh.py           # Descoberta passiva de subdomínios via CT Logs (crt.sh)
@@ -37,7 +38,8 @@ infosec-audit-tools/
 │   └── cve_2024_10924_poc.py              # PoC e guia de remediação para CVE-2024-10924
 ├── requirements.txt                       # Dependências do projeto (aiohttp, requests)
 ├── LICENSE                                # Licença MIT
-└── README.md                              # Documentação e guias de execução
+├── README.md                              # Documentação em inglês e guias de execução
+└── README.pt-br.md                        # Documentação em português brasileiro
 ```
 
 ---
@@ -77,6 +79,22 @@ python3 recon/domain_availability_checker.py lista_nomes.txt --tlds com,com.br -
 
 # Apenas exibir na saída padrão (terminal):
 python3 recon/domain_availability_checker.py lista_nomes.txt --only-print
+```
+
+#### `email_security_auditor.py`
+Auditor passivo de segurança de e-mail e políticas anti-spoofing via DNS:
+* Audita **SPF (Sender Policy Framework, RFC 7208)**: valida qualificadores `all` (`-all`, `~all`, `?all`, `+all`), identifica múltiplos registros SPF e alerta sobre limites de lookups DNS (> 10).
+* Audita **DMARC (RFC 7489)**: avalia política de aplicação (`p=reject`, `p=quarantine`, `p=none`), política para subdomínios (`sp=`), percentual (`pct=`) e tags de telemetria agregada/forense (`rua`/`ruf`).
+* Descobre e valida chaves públicas **DKIM (RFC 6376)** via busca passiva por seletores comuns ou especificação customizada (`-s` / `--selector`).
+* Avalia o nível de **Risco de Spoofing de Domínio** (Crítico, Alto, Médio, Baixo/Protegido), pontuação técnica (0-100) e nota de conformidade (A+ a F).
+* Suporta saída estruturada em JSON (`--json`) e exportação para arquivo (`-o`).
+
+```bash
+# Executar auditoria de e-mail em domínio alvo:
+python3 recon/email_security_auditor.py exemplo.com.br
+
+# Auditoria com seletor DKIM customizado e exportação para JSON:
+python3 recon/email_security_auditor.py exemplo.com.br -s google --json -o auditoria_email.json
 ```
 
 #### `http_security_headers_auditor.py`
